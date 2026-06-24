@@ -24,6 +24,7 @@
 
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        @auth
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
@@ -32,11 +33,13 @@
                 <a href="{{ route('dashboard') }}" class="nav-link">Home</a>
             </li>
         </ul>
+        @endauth
 
+        @auth
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
-                    <i class="fas fa-user-circle"></i> {{ optional(Auth::user())->name ?? 'Guest' }}
+                    <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <a href="#" class="dropdown-item">
@@ -53,8 +56,10 @@
                 </div>
             </li>
         </ul>
+        @endauth
     </nav>
 
+    @auth
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <a href="{{ route('dashboard') }}" class="brand-link">
@@ -64,8 +69,8 @@
         <div class="sidebar">
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="info">
-                    <a href="#" class="d-block">{{ optional(Auth::user())->name ?? 'Guest' }}</a>
-                    <small class="text-muted">{{ optional(optional(Auth::user())->roles)->first()->name ?? 'User' }}</small>
+                    <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+                    <small class="text-muted">{{ optional(Auth::user()->roles->first())->name ?? 'User' }}</small>
                 </div>
             </div>
 
@@ -80,7 +85,12 @@
                                 $isActive = collect($subRoutes)->contains(function($route) {
                                     return request()->routeIs($route);
                                 });
+                                // Check if user has permission for at least one item
+                                $hasAccess = collect($menu['submenu'])->contains(function($sub) {
+                                    return auth()->user()->can($sub['route']);
+                                });
                             @endphp
+                            @if($hasAccess)
                             <li class="nav-item has-treeview{{ $isActive ? ' menu-open' : '' }}">
                                 <a href="#" class="nav-link{{ $isActive ? ' active' : '' }}">
                                     <i class="nav-icon {{ $menu['icon'] }}"></i>
@@ -91,6 +101,7 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     @foreach($menu['submenu'] as $sub)
+                                        @can($sub['route'])
                                         @php $isSubActive = request()->routeIs($sub['route']); @endphp
                                         <li class="nav-item">
                                             <a href="{{ route($sub['route']) }}" class="nav-link{{ $isSubActive ? ' active' : '' }}">
@@ -98,10 +109,13 @@
                                                 <p>{{ $sub['title'] }}</p>
                                             </a>
                                         </li>
+                                        @endcan
                                     @endforeach
                                 </ul>
                             </li>
+                            @endif
                         @else
+                            @can($menu['route'])
                             @php $isActive = request()->routeIs($menu['route']); @endphp
                             <li class="nav-item">
                                 <a href="{{ route($menu['route']) }}" class="nav-link{{ $isActive ? ' active' : '' }}">
@@ -109,6 +123,7 @@
                                     <p>{{ $menu['title'] }}</p>
                                 </a>
                             </li>
+                            @endcan
                         @endif
                     @endforeach
                     
@@ -127,6 +142,7 @@
             </nav>
         </div>
     </aside>
+    @endauth
 
     <!-- Content Wrapper -->
     <div class="content-wrapper">
