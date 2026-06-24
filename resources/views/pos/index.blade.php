@@ -469,15 +469,26 @@ function lookupBarcode() {
 }
 
 function printReceipt() {
-    var content = $('#receiptContent').html();
-    var win = window.open('', '', 'width=300,height=400');
-    win.document.write('<html><head><title>Receipt</title>');
-    win.document.write('<link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">');
-    win.document.write('</head><body>');
-    win.document.write(content);
-    win.document.write('<script>window.print();window.close();<\/script>');
-    win.document.write('</body></html>');
-    win.document.close();
+    var content = document.getElementById('receiptContent').innerHTML;
+    var printWindow = window.open('', '', 'width=300,height=500');
+    printWindow.document.write('<!DOCTYPE html><html><head><title>Receipt</title>');
+    printWindow.document.write('<link rel="stylesheet" href="' + '{{ asset('dist/css/adminlte.min.css') }}' + '">');
+    printWindow.document.write('<style>@media print { body { padding: 10px; font-size: 12px; } table { width: 100%; } }</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(content);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    
+    // Wait for content to load, then print
+    printWindow.onload = function() {
+        printWindow.focus();
+        printWindow.print();
+    };
+    
+    // Close after print dialog closes (works in most browsers)
+    setTimeout(function() {
+        printWindow.close();
+    }, 2000);
 }
 
 // Keyboard shortcut for search
