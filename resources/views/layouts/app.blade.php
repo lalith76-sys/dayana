@@ -111,6 +111,18 @@
                             </li>
                         @endif
                     @endforeach
+                    
+                    <!-- Logout -->
+                    <li class="nav-item" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                        <a href="{{ route('logout') }}" class="nav-link text-danger"
+                           onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">
+                            <i class="nav-icon fas fa-sign-out-alt"></i>
+                            <p>Logout</p>
+                        </a>
+                        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </li>
                 </ul>
             </nav>
         </div>
