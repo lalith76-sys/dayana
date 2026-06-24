@@ -41,6 +41,17 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6 offset-md-4">
+                                <div class="g-recaptcha" data-sitekey="{{ config('app.nocaptcha_sitekey') }}"></div>
+                                @error('g-recaptcha-response')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 offset-md-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
@@ -70,4 +81,7 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+@endpush
 @endsection
