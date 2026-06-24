@@ -24,7 +24,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StockController;
 
-Route::redirect('/', '/dashboard');
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+});
 
 Auth::routes();
 
