@@ -85,12 +85,7 @@
                                 $isActive = collect($subRoutes)->contains(function($route) {
                                     return request()->routeIs($route);
                                 });
-                                // Check if user has permission for at least one item
-                                $hasAccess = collect($menu['submenu'])->contains(function($sub) {
-                                    return auth()->user()->can($sub['route']);
-                                });
                             @endphp
-                            @if($hasAccess)
                             <li class="nav-item has-treeview{{ $isActive ? ' menu-open' : '' }}">
                                 <a href="#" class="nav-link{{ $isActive ? ' active' : '' }}">
                                     <i class="nav-icon {{ $menu['icon'] }}"></i>
@@ -101,7 +96,6 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     @foreach($menu['submenu'] as $sub)
-                                        @can($sub['route'])
                                         @php $isSubActive = request()->routeIs($sub['route']); @endphp
                                         <li class="nav-item">
                                             <a href="{{ route($sub['route']) }}" class="nav-link{{ $isSubActive ? ' active' : '' }}">
@@ -109,13 +103,10 @@
                                                 <p>{{ $sub['title'] }}</p>
                                             </a>
                                         </li>
-                                        @endcan
                                     @endforeach
                                 </ul>
                             </li>
-                            @endif
                         @else
-                            @can($menu['route'])
                             @php $isActive = request()->routeIs($menu['route']); @endphp
                             <li class="nav-item">
                                 <a href="{{ route($menu['route']) }}" class="nav-link{{ $isActive ? ' active' : '' }}">
@@ -123,7 +114,6 @@
                                     <p>{{ $menu['title'] }}</p>
                                 </a>
                             </li>
-                            @endcan
                         @endif
                     @endforeach
                     
